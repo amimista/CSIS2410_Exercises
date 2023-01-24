@@ -1,0 +1,4 @@
+out/
+FirstDatabase/
+.idea/workspace.xml
+*.log
