@@ -1,9 +1,6 @@
 package sqlDerby;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 /**
  * Demonstrate how to create and access a SQL database.
@@ -11,38 +8,62 @@ import java.sql.Statement;
  * @author Marcus
  */
 public class demoDatabase {
-    public static String sqlCreateStudentTable = """
-                    CREATE TABLE Student (
-                        StudentID int,
-                        LastName varchar(255),
-                        FirstName varchar(255),
-                        Major varchar(255),
-                        GradYear int)
-                    """;
-
-    private static String sqlFillStudentTable = "INSERT INTO Student "
-            + "(StudentID, LastName, FirstName, Major, GradYear) VALUES "
-            + "(1234, 'Moor', 'Don', 'EE', 2023), "
-            + "(1235, 'Bell', 'Jen', 'CS', 2022), "
-            + "(1236, 'Bush', 'Tim', 'FA', 2025), "
-            + "(1237, 'Cole', 'Rob', 'CS', 2024)"
-            ;
-
-    private static String sqlDropStudentTable = "DROP TABLE Student";
+    private static StringBuilder builder;
     public static void main(String[] args) {
         String  databaseURL = "jdbc:derby:FirstDatabase;create=true";
 
         try(Connection connection = DriverManager.getConnection(databaseURL);
             Statement statement = connection.createStatement()){
-//            statement.execute(sqlDropStudentTable);
-//            statement.execute(sqlCreateStudentTable);
-            statement.execute(sqlFillStudentTable);
 
+//            Student Table
+            statement.execute(SqlStudent.dropTable());
+            statement.execute(SqlStudent.createTable());
+            statement.execute(SqlStudent.fillTable());
+            printTableData(statement, SqlStudent.selectData());
+
+//            College Table
+            statement.execute(SqlCollege.dropTable());
+            statement.execute(SqlCollege.createTable());
+            statement.execute(SqlCollege.fillTable());
+            printTableData(statement, SqlCollege.selectData());
+
+            System.out.println("Done.");
         } catch (SQLException e) {
             System.out.println("There was a problem accessing the database");
             e.printStackTrace();
         }
 
-        System.out.println("done.");
+    }
+
+    /**
+     * Prints data contained in a SQL Table
+     * @param statement object that is used to change and update a SQL database.
+     * @param action String` that describes what kind of query desired.
+     * @throws SQLException because yeah
+     */
+    private static void printTableData(Statement statement, String action) throws SQLException {
+        builder = new StringBuilder();
+        ResultSet resultSet = statement.executeQuery(action);
+        ResultSetMetaData meta = resultSet.getMetaData();
+//      Print Header
+        for(int i = 1; i <= meta.getColumnCount(); i++) {
+            System.out.print(meta.getColumnLabel(i) + " ");
+        }
+//      Print Data
+        System.out.println();
+        while(resultSet.next()) {
+            for(int i = 1; i <= meta.getColumnCount(); i++) { // there isn't a 0th index in SQL.
+//                builder.append("%-");
+//                builder.append(meta.getColumnLabel(i).length()).append("s ");
+//                System.out.printf(builder.toString(), resultSet.getObject(i).toString());
+
+                System.out.printf("%-" + meta.getColumnLabel(i).length() + "s ", resultSet.getObject(i).toString());
+
+//                System.out.print(resultSet.getObject(i) + " ");
+            }
+            System.out.println();
+            builder.replace(0, builder.length(), "");
+        }
+        System.out.println();
     }
 }
