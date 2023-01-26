@@ -237,36 +237,36 @@ public final class Grid {
      * @return the grid elements in the specified way
      */
     public Iterable<Integer> spiral1() {
-        List<Integer> ans = new ArrayList<Integer>();
+        List<Integer> result = new ArrayList<Integer>();
 
         if (grid.length == 0)
-            return ans;
+            return result;
 
         int gridLength = grid.length;
         boolean[][] seen = new boolean[gridLength][gridLength];
-        int[] dr = { 0, 1, 0, -1 };
-        int[] dc = { 1, 0, -1, 0 };
-        int x = 0, y = 0, di = 0;
+        int[] rowModifier = { 0, 1, 0, -1 };
+        int[] columnModifier = { 1, 0, -1, 0 };
+        int x = 0, y = 0, direction = 0;
 
         // Iterate from 0 to R * C - 1
         for (int i = 0; i < gridLength * gridLength; i++) {
-            ans.add(grid[x][y]);
+            result.add(grid[x][y]);
             seen[x][y] = true;
-            int cr = x + dr[di];
-            int cc = y + dc[di];
+            int nextRowPos = x + rowModifier[direction];
+            int nextColumnPos = y + columnModifier[direction];
 
-            if (0 <= cr && cr < gridLength && 0 <= cc && cc < gridLength
-                    && !seen[cr][cc]) {
-                x = cr;
-                y = cc;
+            if (0 <= nextRowPos && nextRowPos < gridLength && 0 <= nextColumnPos && nextColumnPos < gridLength
+                    && !seen[nextRowPos][nextColumnPos]) {
+                x = nextRowPos;
+                y = nextColumnPos;
             }
             else {
-                di = (di + 1) % 4;
-                x += dr[di];
-                y += dc[di];
+                direction = (direction + 1) % 4;
+                x += rowModifier[direction];
+                y += columnModifier[direction];
             }
         }
-        return ans;
+        return result;
     }
 
     /**
