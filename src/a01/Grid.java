@@ -1,6 +1,6 @@
 package a01;
 
-import java.util.Random;
+import java.util.*;
 import java.lang.StringBuilder;
 
 /**
@@ -42,7 +42,7 @@ public final class Grid {
 
     /**
      * Creates a grid of the specified size and fills it with random 2-digit numbers.
-     * @param size
+     * @param size the dimensions of the grid
      */
     public Grid (int size) {
         this(size, 2);
@@ -53,7 +53,18 @@ public final class Grid {
      * @param array2d two-dimensional array of numbers
      */
     public Grid (int[][] array2d) {
-        grid = null; // TODO
+        grid = array2d;
+        System.out.println("************************************");
+        System.out.print("STARTING GRID (with predefined grid)\n");
+        System.out.println("************************************");
+
+        for(int i = 0; i < grid.length; i++) {
+            for(int j = 0; j < grid[i].length; j++) {
+                System.out.print(grid[i][j] + " ");
+            }
+            System.out.println();
+        }
+
     }
 
     /**
@@ -93,18 +104,21 @@ public final class Grid {
      *         false otherwise
      */
     public boolean largestNeighbor(int i, int j) {
-        boolean out = false;
-        for(int y = 0; y < 3; y++) {
-            for(int x = 0; x < 3; x++) {
-                if((i + (y - 1) < 0 || y > grid.length-1) || (j + (x - 1) < 0 || x > grid.length-1) || grid[i][j] == grid[i + (y - 1)][j + (x - 1)]) {
-                    continue;
-                }
+        int rowLimit = grid.length - 1;
+        int columnLimit = grid[0].length - 1;
+        ArrayList<Integer> neighbors = new ArrayList<>();
 
-                out = grid[i + (y - 1)][j + (x - 1)] > grid[i][j];
-//                System.out.printf(">> Checking if %d is greater than %d, %b%n", grid[i + (y - 1)][j + (x - 1)], grid[i][j], out);
+        for(int yPos = Math.max(0, i-1); yPos <= Math.min(i+1, rowLimit); yPos++) {
+//                          ^ Returns the bigger of the two specified
+            for(int xPos = Math.max(0, j-1); xPos <= Math.min(i+1, columnLimit); xPos++) {
+//                                                        ^ Returns the smaller of the two specified
+                if(yPos != i || xPos != j) { // can't put itself in the list
+                    neighbors.add(grid[yPos][xPos]);
+                }
             }
         }
-        return !out;
+        neighbors.sort(Comparator.reverseOrder()); // Sorts from greatest to least
+        return (grid[i][j] > neighbors.get(0)); // Follows model for return value
     }
 
     /**
@@ -144,14 +158,29 @@ public final class Grid {
      * @return the grid elements in the specified way
      */
     public Iterable<Integer> snake1() {
+        List<Integer> list = new ArrayList<>();
+        // Go through all rows
+        for (int i = 0; i < grid.length; i++) {
 
-        for(int i = 0; i < grid.length; i++) {
-            for(int j = 0; j < grid.length; j++) {
-                System.out.printf(stringB.toString(), grid[i][j]);
+            // If current row is even, print from
+            // left to right
+            if (i % 2 == 0) {
+                for (int j = 0; j < grid[0].length; j++)
+//                    System.out.print(grid[i][j] + " ");
+                    list.add(grid[i][j]);
+
+                // If current row is odd, print from
+                // right to left
             }
-            System.out.println(); // end of the row, make a new line
+            else {
+                for (int j = grid[0].length - 1; j >= 0; j--)
+//                    System.out.print(grid[i][j] + " ");
+                    list.add(grid[i][j]);
+
+            }
         }
-        return null; //TODO
+
+        return (list);
     }
 
     /**
@@ -208,7 +237,36 @@ public final class Grid {
      * @return the grid elements in the specified way
      */
     public Iterable<Integer> spiral1() {
-        return null; // TODO
+        List<Integer> ans = new ArrayList<Integer>();
+
+        if (grid.length == 0)
+            return ans;
+
+        int gridLength = grid.length;
+        boolean[][] seen = new boolean[gridLength][gridLength];
+        int[] dr = { 0, 1, 0, -1 };
+        int[] dc = { 1, 0, -1, 0 };
+        int x = 0, y = 0, di = 0;
+
+        // Iterate from 0 to R * C - 1
+        for (int i = 0; i < gridLength * gridLength; i++) {
+            ans.add(grid[x][y]);
+            seen[x][y] = true;
+            int cr = x + dr[di];
+            int cc = y + dc[di];
+
+            if (0 <= cr && cr < gridLength && 0 <= cc && cc < gridLength
+                    && !seen[cr][cc]) {
+                x = cr;
+                y = cc;
+            }
+            else {
+                di = (di + 1) % 4;
+                x += dr[di];
+                y += dc[di];
+            }
+        }
+        return ans;
     }
 
     /**
@@ -279,8 +337,15 @@ public final class Grid {
      * @param args
      */
     public static void main(String[] args) {
-        Grid grid1 = new Grid(3);
-//        System.out.print(grid1.largestNeighbor(0, 1));
-        grid1.snake1();
+        int[][] array2d = {
+                {25, 30, 89},
+                {50, 68, 19},
+                {84, 99, 20},
+        };
+
+        Grid grid1 = new Grid(array2d);
+        System.out.println(grid1.largestNeighbor(0, 0));
+        System.out.println(grid1.snake1());
+        System.out.println(grid1.spiral1());
     }
 }
