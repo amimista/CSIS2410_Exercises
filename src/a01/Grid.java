@@ -104,22 +104,22 @@ public final class Grid {
      *         false otherwise
      */
     public boolean largestNeighbor(int i, int j) {
-        int rowLimit = grid.length - 1;
-        int columnLimit = grid[0].length - 1;
+        var rowLimit = grid.length-1;
+        var columnLimit = grid[0].length-1;
         ArrayList<Integer> neighbors = new ArrayList<>();
 
-        for(int yPos = Math.max(0, i-1); yPos <= Math.min(i+1, rowLimit); yPos++) {
-//                          ^ Returns the bigger of the two specified
-            for(int xPos = Math.max(0, j-1); xPos <= Math.min(i+1, columnLimit); xPos++) {
-//                                                        ^ Returns the smaller of the two specified
-                if(yPos != i || xPos != j) { // can't put itself in the list
-                    neighbors.add(grid[yPos][xPos]);
+        for(var x = Math.max(0, i-1); x <= Math.min(i+1, rowLimit); x++) {
+            for(var y = Math.max(0, j-1); y <= Math.min(j+1, columnLimit); y++) {
+                if(x != i || y != j) {
+                    neighbors.add(grid[x][y]);
+//                    System.out.println("added " + grid[x][y]);
                 }
             }
         }
-        neighbors.sort(Comparator.reverseOrder()); // Sorts from greatest to least
-        return (grid[i][j] > neighbors.get(0)); // Follows model for return value
+        neighbors.sort(Comparator.reverseOrder());
+        return (grid[i][j] > neighbors.get(0));
     }
+
 
     /**
      * <p>Determines whether the number in row i and column j is the smallest among its neighbors.
@@ -344,7 +344,7 @@ public final class Grid {
         };
 
         Grid grid1 = new Grid(array2d);
-        System.out.println(grid1.largestNeighbor(0, 0));
+        System.out.println(grid1.largestNeighbor(2, 1)); // input coordinates cannot be out of range
         System.out.println(grid1.snake1());
         System.out.println(grid1.spiral1());
     }
