@@ -2,20 +2,37 @@ package sqlDerby;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import java.sql.*;
 
 public class SqlTableViewer {
+//    Swing fields
     private JTable targetTable;
     private JLabel tableLabel;
     private JPanel rootPanel;
     private JScrollPane targetTableScrollPane;
+    private JPanel filterPanel;
+    private JLabel filterLabel;
+    private JComboBox selectComboBox;
+    private JComboBox tableComboBox;
+    private JLabel selectLabel;
+    private JLabel tableFilterLabel;
+    private JTextField whereField;
 
-//    Displaying Table data via 2d arrays
+    //    Displaying Table data via 2d arrays
     private static String[][] fullData;
     private static Object[][] rowData;
 
     public static void main(String[] args) {
+//          Change the look and feel of the app.
+        try {
+//            UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName()); // Cross-Platform
+            UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel"); // Windows
+        } catch (Exception e) {
+            System.out.println("Look and Feel not set");
+        }
+
 //        Setup Precursor Data
         String databaseURL = "jdbc:derby:FirstDatabase;create=true";
 
@@ -23,6 +40,13 @@ public class SqlTableViewer {
              Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
 
             fullData = saveTableData(statement, SqlStudentCollege.studentCollegeInfo());
+            rowData = new Object[fullData.length - 1][fullData[0].length];
+
+            for (int i = 1; i < fullData.length; i++) {
+                for (int j = 0; j < fullData[0].length; j++) {
+                    rowData[i - 1][j] = fullData[i][j];
+                }
+            }
 
 
         } catch (SQLException e) {
@@ -31,20 +55,7 @@ public class SqlTableViewer {
         }
 
 //        Setup Data Structure for Table
-        TableModel dataModel = new
-                AbstractTableModel() {
-                    public int getColumnCount() {
-                        return fullData[0].length;
-                    }
-
-                    public int getRowCount() {
-                        return fullData.length-2;
-                    }
-
-                    public Object getValueAt(int row, int col) {
-                        return rowData[row][col];
-                    }
-                };
+        DefaultTableModel dataModel = new DefaultTableModel(rowData, fullData[0]);
 
 //        Setup GUI
         SqlTableViewer viewer = new SqlTableViewer();

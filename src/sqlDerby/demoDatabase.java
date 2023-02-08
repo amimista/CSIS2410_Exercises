@@ -12,49 +12,21 @@ public class demoDatabase {
     ResultSet resultSet;
     ResultSetMetaData metaData;
 
-    public demoDatabase(String dbName, boolean dropCurrent) {
-        this.databaseName = dbName;
-
-        String databaseURL = "jdbc:derby:" + this.databaseName + ";create=true";
-        try (Connection connection = DriverManager.getConnection(databaseURL);
-             Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
-
-//            this.resultSet = statement.executeQuery(action);
-//            this.metaData = resultSet.getMetaData();
-            System.out.println(">> Database Created.");
-        } catch (SQLException e) {
-            System.out.println("There was a problem accessing the database");
-            e.printStackTrace();
-        }
-    }
-
-
-
     public static void main(String[] args) {
-        String databaseURL = "jdbc:derby:FirstDatabase;create=true";
-
-        try (Connection connection = DriverManager.getConnection(databaseURL);
+        try (Connection connection = DriverManager.getConnection(CampusDbGenerator.DB_URL);
              Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
 
+            CampusDbGenerator.createAllTables(true);
 //            Student Table
-//            statement.execute(SqlStudent.dropTable());
-//            statement.execute(SqlStudent.createTable());
-//            statement.execute(SqlStudent.fillTable());
-//            printTableData(statement, SqlStudent.selectData());
+            printTableData(statement, SqlStudent.selectData());
 
 //            College Table
-//            statement.execute(SqlCollege.dropTable());
-//            statement.execute(SqlCollege.createTable());
-//            statement.execute(SqlCollege.fillTable());
-//            printTableData(statement, SqlCollege.selectData());
+            printTableData(statement, SqlCollege.selectData());
 
 //            StudentCollege Table
-//            statement.execute(SqlStudentCollege.dropTable());
-//            statement.execute(SqlStudentCollege.createTable());
-//            statement.execute(SqlStudentCollege.fillTable());
-//            printTableData(statement, SqlStudentCollege.selectData());
+            printTableData(statement, SqlStudentCollege.selectData());
 //
-//            printTableData(statement, SqlStudentCollege.studentCollegeInfo());
+            printTableData(statement, SqlStudentCollege.studentCollegeInfo());
 
 //            String[][] table = saveTableData(statement, SqlStudentCollege.studentCollegeInfo());
 //            String[] data = new String[table[0].length];
