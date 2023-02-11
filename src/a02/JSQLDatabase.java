@@ -1,7 +1,5 @@
 package a02;
 
-import sqlDerby.SqlStudent;
-
 import java.sql.*;
 
 public class JSQLDatabase {
@@ -13,6 +11,54 @@ public class JSQLDatabase {
         DB_URL = "jdbc:derby:" + DATABASE_NAME + ";create=true";
     }
 
+    public static void createNatDexTable(boolean drop) {
+        try (Connection connection = DriverManager.getConnection(DB_URL);
+             Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
+            if (drop)
+                statement.execute("TODO"); // TODO: 2/10/2023 -> drop table
+
+            statement.execute("TODO"); // TODO: 2/10/2023 -> create table
+            statement.execute("TODO"); // TODO: 2/10/2023 -> fill table
+        } catch (SQLException e) {
+            System.out.println("There was a problem creating NatDex table");
+            e.printStackTrace();
+        }
+    }
+
+    public static void createNextStageTable(boolean drop) {
+        try (Connection connection = DriverManager.getConnection(DB_URL);
+             Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
+            if (drop)
+                statement.execute("TODO"); // TODO: 2/10/2023 -> drop table
+
+            statement.execute("TODO"); // TODO: 2/10/2023 -> create table
+            statement.execute("TODO"); // TODO: 2/10/2023 -> fill table
+        } catch (SQLException e) {
+            System.out.println("There was a problem creating NextStage table");
+            e.printStackTrace();
+        }
+    }
+
+    public static void createRegionTable(boolean drop) {
+        try (Connection connection = DriverManager.getConnection(DB_URL);
+             Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
+            if (drop)
+                statement.execute("TODO"); // TODO: 2/10/2023 -> drop table
+
+            statement.execute("TODO"); // TODO: 2/10/2023 -> create table
+            statement.execute("TODO"); // TODO: 2/10/2023 -> fill table
+        } catch (SQLException e) {
+            System.out.println("There was a problem creating Region table");
+            e.printStackTrace();
+        }
+    }
+
+    public static void createAllTables(boolean drop) {
+        createNatDexTable(drop);
+        createNextStageTable(drop);
+        createRegionTable(drop);
+
+    }
     public static String[][] saveTableData(String action) throws SQLException {
         String[][] resultList = new String[0][];
 

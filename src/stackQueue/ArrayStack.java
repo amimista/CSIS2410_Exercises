@@ -78,17 +78,29 @@ public class ArrayStack {
     public static void main(String[] args) {
         ArrayStack stack = new ArrayStack(6);
         System.out.println(stack);
-        stack.push("item");
+//        System.out.println("Element Popped: " + stack.pop()); // -> EXPECTED EXCEPTION
+
+        stack.push("ape");
         System.out.println(stack);
-        stack.push("item1");
-        System.out.println(stack);
-        stack.push("item2");
-        System.out.println(stack);
-        stack.push("item3");
+        stack.push("dog");
         System.out.println(stack);
 
-        System.out.println(stack.pop());
+        System.out.println("Popped element " + stack.pop());
         System.out.println(stack);
+
+        stack.push("cat");
+        System.out.println(stack);
+
+        System.out.println(stack.peek());
+        System.out.println("Popped element " + stack.pop());
+
+
+        for (int i = 0; i < stack.size(); i++) {
+            stack.pop();
+        }
+
+        System.out.println(stack);
+//        System.out.println(stack.peek()); // -> EXPECTED EXCEPTION
 
     }
 }

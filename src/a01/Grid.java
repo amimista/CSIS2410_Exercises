@@ -25,7 +25,7 @@ public final class Grid {
         stringB.append("%").append(Integer.valueOf(n)).append("d ");
 //		setting the size of the random number (non-inclusive)
         StringBuilder n_digits = new StringBuilder("10");
-        n_digits.append("0".repeat(Math.max(0, n - 1)));
+
 
         System.out.println("******************************");
         System.out.printf("STARTING GRID (%dx%d) %d-digit%n", size, size, n);
@@ -53,10 +53,11 @@ public final class Grid {
      * @param array2d two-dimensional array of numbers
      */
     public Grid (int[][] array2d) {
-        grid = array2d;
+
         System.out.println("************************************");
         System.out.print("STARTING GRID (with predefined grid)\n");
         System.out.println("************************************");
+        grid = array2d;
 
         for(int i = 0; i < grid.length; i++) {
             for(int j = 0; j < grid[i].length; j++) {
@@ -64,7 +65,6 @@ public final class Grid {
             }
             System.out.println();
         }
-
     }
 
     /**
@@ -112,14 +112,13 @@ public final class Grid {
             for(var y = Math.max(0, j-1); y <= Math.min(j+1, columnLimit); y++) {
                 if(x != i || y != j) {
                     neighbors.add(grid[x][y]);
-//                    System.out.println("added " + grid[x][y]);
+
                 }
             }
         }
         neighbors.sort(Comparator.reverseOrder());
         return (grid[i][j] > neighbors.get(0));
     }
-
 
     /**
      * <p>Determines whether the number in row i and column j is the smallest among its neighbors.
@@ -131,7 +130,18 @@ public final class Grid {
      *         false otherwise
      */
     public boolean smallestNeighbor(int i, int j) {
-        return false; // TODO
+        var rowLimit = grid.length-1;
+        var columnLimit = grid[0].length-1;
+        ArrayList<Integer> neighbors = new ArrayList<>();
+        for(var x = Math.max(0, i-1); x <= Math.min(i+1, rowLimit); x++) {
+            for(var y = Math.max(0, j-1); y <= Math.min(j+1, columnLimit); y++) {
+                if(x != i || y != j) {
+                    neighbors.add(grid[x][y]);
+                }
+            }
+        }
+        neighbors.sort(Comparator.reverseOrder());
+        return (grid[i][j] < neighbors.get(0));
     }
 
     /**
@@ -166,7 +176,7 @@ public final class Grid {
             // left to right
             if (i % 2 == 0) {
                 for (int j = 0; j < grid[0].length; j++)
-//                    System.out.print(grid[i][j] + " ");
+
                     list.add(grid[i][j]);
 
                 // If current row is odd, print from
@@ -174,9 +184,8 @@ public final class Grid {
             }
             else {
                 for (int j = grid[0].length - 1; j >= 0; j--)
-//                    System.out.print(grid[i][j] + " ");
-                    list.add(grid[i][j]);
 
+                    list.add(grid[i][j]);
             }
         }
 
@@ -207,7 +216,28 @@ public final class Grid {
      * @return the grid elements in the specified way
      */
     public Iterable<Integer> snake2() {
-        return null; // TODO
+        List<Integer> list = new ArrayList<>();
+        // Go through all rows
+        for (int j = 0; j < grid.length; j++) {
+
+            // If current row is even, print from
+            // right to left
+            if (j % 2 == 0) {
+                for (int i = 0; i < grid[0].length; i++)
+
+                    list.add(grid[i][j]);
+
+                // If current row is odd, print from
+                // left to right
+            }
+            else {
+                for (int i = grid[0].length - 1; i >= 0; i--)
+
+                    list.add(grid[i][j]);
+            }
+        }
+
+        return (list);
     }
 
     /**
@@ -264,8 +294,10 @@ public final class Grid {
                 direction = (direction + 1) % 4;
                 x += rowModifier[direction];
                 y += columnModifier[direction];
+
             }
         }
+
         return result;
     }
 
@@ -296,7 +328,38 @@ public final class Grid {
      * @return the grid elements in the specified way
      */
     public Iterable<Integer> spiral2() {
-        return null; // TODO
+
+        List<Integer> result = new ArrayList<Integer>();
+
+        if (grid.length == 0)
+            return result;
+
+        int gridLength = grid.length;
+        boolean[][] seen = new boolean[gridLength][gridLength];
+        int[] rowModifier = { 1, 0, -1, 0 };
+        int[] columnModifier = { 0, 1, 0, -1 };
+        int x = 0, y = 0, direction = 0;
+
+        // Iterate from 0 to R * C - 1
+        for (int i = 0; i < gridLength * gridLength; i++) {
+            result.add(grid[x][y]);
+            seen[x][y] = true;
+            int nextRowPos = x + rowModifier[direction];
+            int nextColumnPos = y + columnModifier[direction];
+
+            if (0 <= nextRowPos && nextRowPos < gridLength && 0 <= nextColumnPos && nextColumnPos < gridLength
+                    && !seen[nextRowPos][nextColumnPos]) {
+                x = nextRowPos;
+                y = nextColumnPos;
+            }
+            else {
+                direction = (direction + 1) % 4;
+                x += rowModifier[direction];
+                y += columnModifier[direction];
+
+            }
+        }
+        return result;
     }
 
     /**
@@ -322,14 +385,33 @@ public final class Grid {
      *  <p>A 1 x 1 grid returns a string that includes the number preceded by one space.<br />
      *  A 0 x 0 grid returns an empty string.</p>
      *
-     * {@inheritDoc}
+     *
      */
     @Override
     public String toString() {
-        return null; // TODO
+        int maxWidth = 0;
+        for (int[] row : grid) {
+            for (int val : row) {
+                maxWidth = Math.max(maxWidth, String.valueOf(val).length());
+            }
+        }
+        maxWidth++;
+
+        StringBuilder sb = new StringBuilder();
+        for (int[] row : grid) {
+            for (int val : row) {
+                sb.append(String.format("%" + maxWidth + "d", val));
+            }
+            sb.append("\n");
+        }
+        return sb.toString();
     }
 
+
+
     // = = = test client for your own testing = = =
+
+
 
     /**
      * Test client
@@ -337,15 +419,50 @@ public final class Grid {
      * @param args
      */
     public static void main(String[] args) {
-        int[][] array2d = {
-                {25, 30, 89},
-                {50, 68, 19},
-                {84, 99, 20},
-        };
+        /**
+         * int[][] array2d = {
+         {25, 30, 89},
+         {50, 68, 19},
+         {84, 99, 20},
+         };
 
-        Grid grid1 = new Grid(array2d);
-        System.out.println(grid1.largestNeighbor(2, 1)); // input coordinates cannot be out of range
-        System.out.println(grid1.snake1());
-        System.out.println(grid1.spiral1());
+         int[][] array2d2 = {
+         {25, 30, 89, 100},
+         {50, 110, 19, 57},
+         {115, 84, 99, 20},
+         {1, 2, 105, 16},
+
+         };
+
+         Grid grid1 = new Grid(array2d);
+         Grid grid2 = new Grid(array2d2);
+
+         System.out.println();
+         System.out.println("Is Largest Neighbor: " + grid1.largestNeighbor(0, 2)); // input coordinates cannot be out of range
+         System.out.println();
+         System.out.println("Snake 1 grid: " + grid1.snake1());
+         System.out.println();
+         System.out.println("Spiral 1 grid: " + grid1.spiral1());
+         System.out.println();
+         System.out.println("Is smallest neighbor: " + grid1.smallestNeighbor(1, 2));
+         System.out.println();
+         System.out.println("Snake 2 grid: " + grid1.snake2());
+         System.out.println();
+         System.out.println("Spiral 2 grid: " + grid1.spiral2());
+         System.out.println();
+         System.out.println(grid1.toString());
+         System.out.println(grid2.toString());
+         System.out.println("Is Largest Neighbor: " + grid2.largestNeighbor(2, 0));
+         System.out.println();
+         System.out.println("Is smallest neighbor: " + grid2.smallestNeighbor(3, 3));
+         System.out.println();
+         System.out.println("Snake 1 with 4x4 grid: " + grid2.snake1());
+         System.out.println();
+         System.out.println("Snake 2 with 4x4 grid: " + grid2.snake2());
+         System.out.println();
+         System.out.println("Spiral 1 with 4x4 grid: " + grid2.spiral1());
+         System.out.println();
+         System.out.println("Spiral 2 with 4x4 grid: " + grid2.spiral2());
+         **/
     }
 }
