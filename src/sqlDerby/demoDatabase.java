@@ -49,7 +49,7 @@ public class demoDatabase {
      * @param action    String` that describes what kind of query desired.
      * @throws SQLException because yeah
      */
-    private static void printTableData(Statement statement, String action) throws SQLException {
+    public static void printTableData(Statement statement, String action) throws SQLException {
         ResultSet resultSet = statement.executeQuery(action);
         ResultSetMetaData meta = resultSet.getMetaData();
 //      Print Header
