@@ -1,4 +1,5 @@
 out/
 FirstDatabase/
+pokemon/
 .idea/workspace.xml
 *.log

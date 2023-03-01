@@ -58,4 +58,8 @@ public class CampusDbGenerator {
         createStudentCollegeTable(drop);
 
     }
+
+    public static void main(String[] args) {
+        createAllTables(true);
+    }
 }
